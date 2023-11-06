@@ -101,12 +101,11 @@ relative to repo root, as returned by git diff --name-only."
      ((string-match
        "^scripts/formatters/\\([^/]+\\)$" changed-file)
       (let ((script (match-string 1 changed-file)))
-        (mapcar #'symbol-name
-                (map-keys
-                 (map-filter
-                  (lambda (fmt def)
-                    (and (listp def) (member script def)))
-                  apheleia-formatters))))))))
+        (map-keys
+         (map-filter
+          (lambda (fmt def)
+            (member script def))
+          apheleia-formatters)))))))
 
 (defun apheleia-ft--get-formatters-for-pull-request ()
   "Return list of formatter string names that were touched in this PR.
@@ -134,10 +133,7 @@ main."
   "Print to stdout a comma-delimited list of formatters changed in this PR."
   (princ (concat
           (string-join
-           (cl-remove-duplicates
-            (apheleia-ft--get-formatters-for-pull-request)
-            :test 'string=)
-           ",")
+           (apheleia-ft--get-formatters-for-pull-request) ",")
           "\n")))
 
 (defun apheleia-ft--read-file (filename)
